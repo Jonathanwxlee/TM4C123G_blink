@@ -1,0 +1,18 @@
+# Build output
+build/
+
+# CMake generated files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# VS Code local settings
+.vscode/
+
+# macOS system files
+.DS_Store
+
+# Temporary files
+*.log
+*.tmp
