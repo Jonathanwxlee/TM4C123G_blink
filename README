@@ -1,0 +1,89 @@
+This is my first project with the TM4C123G microcontroller. This is a program that blinks the red led on the board in an infinite loop. 
+
+Here are the steps to compile and flash the software onto the TM4C123G MCU
+
+Prerequisites: 
+- Install arm-non-eabi-gcc compiler
+- Install OpenOCD
+
+1. compile the software using the arm-none-eabi-gcc compiler. 
+```
+arm-none-eabi-gcc \
+    -mcpu=cortex-m4 \
+    -mthumb \
+    -mfloat-abi=soft \
+    -ffreestanding \
+    -fno-builtin \
+    -ffunction-sections \
+    -fdata-sections \
+    -g3 -O0 \
+    -Wall -Wextra \
+    -nostdlib \
+    -T linker/tm4c123gh6pm.ld \
+    -Wl,--gc-sections \
+    -Wl,-Map=build/firmware.map \
+    startup/startup.S src/main.c \
+    -o build/firmware.elf
+```
+2. connect microcotnroller to Mac. Use OpenOCD to flash the software into the TM4C123G MCU's flash memory
+```
+openocd -f board/ek-tm4c123gxl.cfg \                                     
+    -c "program build/firmware.elf verify reset exit"
+```
+
+
+
+
+
+-------------------
+Some learnings:
+
+There are two categories of learnings that I took away, and hope to remember from this project. 
+1. Source code
+2. The compilation and execution process for the board. 
+
+
+1. Source code learnings
+Registers:
+- These are basic storage locations for data being manipulated by the Microcontroller. There is a pre-determined set of hardware registers on the MCU. THey are also already locationally defined (have an address). 
+- registers exist that can control the liveliness of peripherals
+Peripherals:
+- These are integrated on-chip hardware blocks that extend the functionality of the CPU
+- Peripherals have their own set of hardware registers. These may be DEN, DIR, DATA, etc. 
+
+There's actually a lot more, but it's more important that I practice more wit them than write it down for retention purposes. 
+
+2. Compilation learnings
+As we know, the general compilation process is 
+- write source code
+- compile into machine code that the board's processor (ARM Cortex M4) can understand.
+- Processor executes the program. 
+
+I learned the specifics for doing this with the TM4C123G microcontroller. Perhaps this is synonymous for any microcontroller/arduino development. 
+1. startup.S (startup/startup.S): After writing the source code in src/main.c, and before compiling the code, we also must include the startup.S script. This script is a basic setup for things, and includes a call to the main() function in the source code. It is already written in assembly.
+2. linker (linker/tm4c123gh6pm.ld): The linker script specifies where different parts of the program should go in memory
+3. Now that we have these files, we can pass them into the compiler to get an output executable readable by the ARM processor. The compiler to use is called arm-none-eabi-gcc. 
+    - not important but cool to know: the arm-none-eabi-gcc compiler will generate machine code for the ARM cortex M4 processor. The ARM cortex M4 processor uses the Armv7E instruction set architecture. During the compilation process, the assembly was written in a Armv7E specification, and the arm-none-eabi-gcc assembled it into object code that the cortex M4 processor can understand. 
+    - This is the command used for compilation:
+    arm-none-eabi-gcc \
+    -mcpu=cortex-m4 \
+    -mthumb \
+    -mfloat-abi=soft \
+    -ffreestanding \
+    -fno-builtin \
+    -ffunction-sections \
+    -fdata-sections \
+    -g3 -O0 \
+    -Wall -Wextra \
+    -nostdlib \
+    -T linker/tm4c123gh6pm.ld \
+    -Wl,--gc-sections \
+    -Wl,-Map=build/firmware.map \
+    startup/startup.S src/main.c \
+    -o build/firmware.elf
+    - as seen in the -o flag, the output executable is the firmware.elf (build/firmware.elf). 
+4. The entire firmware.elf file does not get flashed into the board's memory. Only the raw machine code and data needed to run the program get flashed. 
+5. Run:  openocd -f board/ek-tm4c123gxl.cfg \                                     
+    -c "program build/firmware.elf verify reset exit"
+
+

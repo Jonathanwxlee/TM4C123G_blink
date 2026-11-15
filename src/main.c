@@ -46,7 +46,7 @@ GPIO Port F peripheral registers
 ...
 |            :     |
 
-DATA addresses for all the pins of Port F are scattereda round the register address block. However, there is a formula for determining this
+DATA addresses for all the pins of Port F are scattered around the register address block. However, there is a formula for determining this
 pin DATA address = [base address] + ([PIN mask] x 4)
 ------------------------------------------
 DIR: This register determines the direction of each PIN on the GPIO port F peripheral.
@@ -73,11 +73,11 @@ When the bit is 0, the corresponding pin's digital input/output functionality is
 /*PF1 controls the red LED
 
 Each pin of the GPIO port F peripheral corresponds to a bit. 
-PF0 : 00000001 : 0x01
-PF1 : 00000010 : 0x02
-PF2 : 00000100 : 0x04
-PF3 : 00001000 : 0x08
-PF4 : 00010000 : 0x10
+PF0 : 00000001 : 0x01 (Controls user switch 2 idk what this is yet)
+PF1 : 00000010 : 0x02 (Controls the Red LED)
+PF2 : 00000100 : 0x04 (Controls the Blue LED)
+PF3 : 00001000 : 0x08 (Controls the Green LED)
+PF4 : 00010000 : 0x10 (Controls user switch 1 idk when this is yet)
 
 definig RED_LED below is just a mask we can use with an identifiable name whenver we want to set the PF1 pin. 
 By setting this directive, we are saying that this pin will always be associated with the red led. 
