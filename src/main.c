@@ -65,6 +65,18 @@ Register: | 00000000 00000000 00000000 000[00000] |
 
 When the bit is 0, the corresponding pin's digital input/output functionality is disabled. When the bit is 1, the corresponding pin's digital input/output functionality is ENABLED
 ------------------------------------------
+DATA: This register holds the data info of each pin on the GPIO Port F peripheral.
+Again, for the GPIO Port F peripheral, only 5 bits are used since there are only 5 pins in the Port F peripheral (PF0, PF1, PF2, PF3, PF4)
+
+Register: | 00000000 00000000 00000000 000[00000] |
+
+When the bit is 0, the corresponding pin's info is "off". When the bit is 1, the corresponding pin's data is "on"
+
+NOTE: the TM4C123G has a unique address masking technique where instead of trying to eid thte full register, 
+you can get an address that allows you to operate only on that register (atomic RMW). It's easier and more efficient. but 
+This feature is not available on regular arduinos, however. 
+------------------------------------------
+
 */
 #define GPIO_PORTF_BASE    0x40025000 // this is the starting memory address for GPIO port F peripheral's registers. 
 #define GPIO_PORTF_DIR_R   (*((volatile uint32_t *)(GPIO_PORTF_BASE + 0x400)))
@@ -110,7 +122,7 @@ int main(void)
     // 4. Enable digital functionality on PF1
     GPIO_PORTF_DEN_R |= RED_LED;
 
-    // GPIO masked data register for PF1. So this led uint32 represents the address of the DATA register for PF1
+    // GPIO masked data address for PF1. (using the masked address technique unique to TM4C123G MCUs)
     volatile uint32_t *led = (volatile uint32_t *)(GPIO_PORTF_BASE + (RED_LED << 2));
 
     // 5. Continuously blink the red LED
